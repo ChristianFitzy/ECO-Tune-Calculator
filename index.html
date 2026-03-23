@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Evolve Technik — Fuel Savings Calculator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Space Grotesk', 'ui-sans-serif', 'system-ui'] },
+          colors: {
+            evolveRed: '#ed1c24',
+            carbon1: '#0a0a0a',
+            carbon2: '#1a1a1a',
+            carbon3: '#2a2a2a'
+          },
+          boxShadow: {
+            glow: '0 0 30px rgba(237, 28, 36, 0.25)'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+    body {
+      background: radial-gradient(1200px 600px at 10% 0%, rgba(237,28,36,0.15), transparent 60%),
+                  radial-gradient(1000px 600px at 90% 10%, rgba(255,255,255,0.05), transparent 60%),
+                  linear-gradient(180deg, #0a0a0a 0%, #111 35%, #0a0a0a 100%);
+    }
+    .glass {
+      background: rgba(26, 26, 26, 0.55);
+      backdrop-filter: blur(14px) saturate(140%);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .input-dark {
+      background: rgba(10,10,10,0.7);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .input-dark:focus {
+      outline: none;
+      border-color: rgba(237,28,36,0.6);
+      box-shadow: 0 0 0 3px rgba(237,28,36,0.15);
+    }
+    .fade-in {
+      animation: fadeInUp 0.7s ease-out both;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .progress-bar {
+      background: linear-gradient(90deg, rgba(237,28,36,0.95), rgba(237,28,36,0.5));
+    }
+  </style>
+</head>
+<body class="font-sans text-white min-h-screen">
+  <div class="max-w-6xl mx-auto px-5 py-10 md:py-16">
+    <header class="mb-10 md:mb-14 text-center">
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-sm tracking-wide uppercase mb-4">
+        <span class="w-2 h-2 bg-evolveRed rounded-full"></span>
+        Evolve Technik • Performance ECU & TCU Tuning
+      </div>
+      <h1 class="text-3xl md:text-5xl font-semibold tracking-tight">Calculate Your Fuel Savings</h1>
+      <p class="text-white/70 mt-3 max-w-2xl mx-auto">See how an Evolve Technik tune can reduce your fuel consumption and pay for itself — fast.</p>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+      <!-- Calculator Card -->
+      <section class="glass rounded-2xl p-6 md:p-8 shadow-lg">
+        <h2 class="text-xl font-semibold mb-6">Fuel Savings Calculator</h2>
+
+        <div class="grid grid-cols-1 gap-5">
+          <label class="text-sm">
+            <span class="text-white/70">Annual Kilometers Driven</span>
+            <div class="mt-2 flex items-center gap-2">
+              <input id="annualKm" type="number" min="0" step="100" value="20000" class="input-dark w-full rounded-lg px-4 py-3" />
+              <span class="text-white/60 text-sm">km</span>
+            </div>
+          </label>
+
+          <label class="text-sm">
+            <span class="text-white/70">Current Fuel Consumption</span>
+            <div class="mt-2 flex items-center gap-2">
+              <input id="currentConsumption" type="number" min="0" step="0.1" value="9.0" class="input-dark w-full rounded-lg px-4 py-3" />
+              <span class="text-white/60 text-sm">L/100km</span>
+            </div>
+          </label>
+
+          <label class="text-sm">
+            <span class="text-white/70">Fuel Price</span>
+            <div class="mt-2 flex items-center gap-2">
+              <input id="fuelPrice" type="number" min="0" step="0.01" value="2.10" class="input-dark w-full rounded-lg px-4 py-3" />
+              <span class="text-white/60 text-sm">AUD/L</span>
+            </div>
+          </label>
+
+          <div class="glass rounded-lg px-4 py-3 border border-evolveRed/40">
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="text-sm font-semibold">ECU Tuning Improvement</div>
+                <div class="text-xs text-white/60 mt-1">Average fuel efficiency gain</div>
+              </div>
+              <div class="text-2xl font-bold text-evolveRed">10%</div>
+            </div>
+          </div>
+
+          <button id="calcBtn" class="bg-evolveRed hover:brightness-110 transition-all duration-200 text-white font-semibold rounded-lg py-3 shadow-glow">
+            Calculate Savings
+          </button>
+        </div>
+
+        <div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+          <div class="glass rounded-xl px-4 py-3">
+            <div class="text-xs text-white/60">Trust Signal</div>
+            <div class="text-sm font-semibold">11 Dealers Nationwide</div>
+          </div>
+          <div class="glass rounded-xl px-4 py-3">
+            <div class="text-xs text-white/60">Trust Signal</div>
+            <div class="text-sm font-semibold">Dyno-Tested</div>
+          </div>
+          <div class="glass rounded-xl px-4 py-3">
+            <div class="text-xs text-white/60">Trust Signal</div>
+            <div class="text-sm font-semibold">Warranty-Friendly</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Results Card -->
+      <section id="resultsCard" class="glass rounded-2xl p-6 md:p-8 shadow-lg fade-in">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold">Your Savings</h2>
+          <span class="text-xs text-white/60">Based on $1,650 tune</span>
+        </div>
+
+        <div class="mt-6">
+          <div class="text-sm text-white/60">Annual Savings</div>
+          <div id="annualSavings" class="text-4xl md:text-5xl font-semibold text-evolveRed">$0</div>
+          <div class="text-white/60 text-sm mt-1">Monthly: <span id="monthlySavings">$0</span></div>
+        </div>
+
+        <div class="mt-6 grid grid-cols-2 gap-4">
+          <div class="glass rounded-xl px-4 py-4">
+            <div class="text-xs text-white/60">Improved Consumption</div>
+            <div id="consumptionChange" class="text-lg font-semibold">9.0 → 7.5 L/100km</div>
+          </div>
+          <div class="glass rounded-xl px-4 py-4">
+            <div class="text-xs text-white/60">Payback Period</div>
+            <div id="paybackPeriod" class="text-lg font-semibold">0.0 months</div>
+          </div>
+          <div class="glass rounded-xl px-4 py-4">
+            <div class="text-xs text-white/60">5-Year Total Savings</div>
+            <div id="fiveYearSavings" class="text-lg font-semibold">$0</div>
+          </div>
+          <div class="glass rounded-xl px-4 py-4">
+            <div class="text-xs text-white/60">New Annual Fuel Cost</div>
+            <div id="newAnnualCost" class="text-lg font-semibold">$0</div>
+          </div>
+        </div>
+
+        <div class="mt-6">
+          <div class="text-sm font-semibold mb-3">Return on Investment Forecast</div>
+          <div class="relative h-48 flex items-end justify-between gap-2">
+            <!-- Tune Cost Bar (negative/initial investment) -->
+            <div class="flex-1 flex flex-col items-center">
+              <div class="w-full bg-white/10 rounded-t-lg relative" style="height: 30px;">
+                <div class="absolute inset-0 flex items-center justify-center text-xs font-semibold">
+                  -$1,650
+                </div>
+              </div>
+              <div class="text-xs text-white/60 mt-2 text-center">Today<br>(Tune Cost)</div>
+            </div>
+            
+            <!-- Year 1-5 Bars (cumulative savings) -->
+            <div id="year1Bar" class="flex-1 flex flex-col items-center">
+              <div class="w-full bg-gradient-to-t from-evolveRed/80 to-evolveRed/40 rounded-t-lg relative transition-all duration-500" style="height: 0px;">
+                <div class="absolute -top-6 left-0 right-0 text-center text-xs font-semibold" id="year1Label">$0</div>
+              </div>
+              <div class="text-xs text-white/60 mt-2 text-center">Year 1</div>
+            </div>
+            
+            <div id="year2Bar" class="flex-1 flex flex-col items-center">
+              <div class="w-full bg-gradient-to-t from-evolveRed/80 to-evolveRed/40 rounded-t-lg relative transition-all duration-500" style="height: 0px;">
+                <div class="absolute -top-6 left-0 right-0 text-center text-xs font-semibold" id="year2Label">$0</div>
+              </div>
+              <div class="text-xs text-white/60 mt-2 text-center">Year 2</div>
+            </div>
+            
+            <div id="year3Bar" class="flex-1 flex flex-col items-center">
+              <div class="w-full bg-gradient-to-t from-evolveRed/80 to-evolveRed/40 rounded-t-lg relative transition-all duration-500" style="height: 0px;">
+                <div class="absolute -top-6 left-0 right-0 text-center text-xs font-semibold" id="year3Label">$0</div>
+              </div>
+              <div class="text-xs text-white/60 mt-2 text-center">Year 3</div>
+            </div>
+            
+            <div id="year4Bar" class="flex-1 flex flex-col items-center">
+              <div class="w-full bg-gradient-to-t from-evolveRed/80 to-evolveRed/40 rounded-t-lg relative transition-all duration-500" style="height: 0px;">
+                <div class="absolute -top-6 left-0 right-0 text-center text-xs font-semibold" id="year4Label">$0</div>
+              </div>
+              <div class="text-xs text-white/60 mt-2 text-center">Year 4</div>
+            </div>
+            
+            <div id="year5Bar" class="flex-1 flex flex-col items-center">
+              <div class="w-full bg-gradient-to-t from-evolveRed/80 to-evolveRed/40 rounded-t-lg relative transition-all duration-500" style="height: 0px;">
+                <div class="absolute -top-6 left-0 right-0 text-center text-xs font-semibold" id="year5Label">$0</div>
+              </div>
+              <div class="text-xs text-white/60 mt-2 text-center">Year 5</div>
+            </div>
+          </div>
+          <div class="text-xs text-white/60 mt-4 text-center" id="breakevenText">Payback period: calculating...</div>
+        </div>
+
+        <div class="mt-8 flex flex-col sm:flex-row gap-3 sm:items-center">
+          <button class="bg-evolveRed hover:brightness-110 transition-all duration-200 text-white font-semibold rounded-lg px-5 py-3 shadow-glow w-full sm:w-auto">
+            Book Your Tune Now
+          </button>
+          <div class="text-white/70 text-sm">Call <span class="text-white font-semibold">1300 980 898</span></div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="text-xs text-white/50 mt-10 text-center">
+      <p>Disclaimer: Savings are estimates only and depend on driving style, vehicle condition, fuel type, and environmental factors. Results are not guaranteed.</p>
+    </footer>
+  </div>
+
+  <script>
+    const annualKmEl = document.getElementById('annualKm');
+    const currentConsumptionEl = document.getElementById('currentConsumption');
+    const fuelPriceEl = document.getElementById('fuelPrice');
+    const annualSavingsEl = document.getElementById('annualSavings');
+    const monthlySavingsEl = document.getElementById('monthlySavings');
+    const consumptionChangeEl = document.getElementById('consumptionChange');
+    const paybackPeriodEl = document.getElementById('paybackPeriod');
+    const fiveYearSavingsEl = document.getElementById('fiveYearSavings');
+    const newAnnualCostEl = document.getElementById('newAnnualCost');
+    const year1BarEl = document.getElementById('year1Bar');
+    const year2BarEl = document.getElementById('year2Bar');
+    const year3BarEl = document.getElementById('year3Bar');
+    const year4BarEl = document.getElementById('year4Bar');
+    const year5BarEl = document.getElementById('year5Bar');
+    const year1LabelEl = document.getElementById('year1Label');
+    const year2LabelEl = document.getElementById('year2Label');
+    const year3LabelEl = document.getElementById('year3Label');
+    const year4LabelEl = document.getElementById('year4Label');
+    const year5LabelEl = document.getElementById('year5Label');
+    const breakevenTextEl = document.getElementById('breakevenText');
+    const calcBtn = document.getElementById('calcBtn');
+    // Removed savings button array - fixed 10% improvement
+
+    const IMPROVEMENT_PERCENTAGE = 0.10; // 10% fixed improvement
+
+    function formatCurrency(value) {
+      return value.toLocaleString('en-AU', { style: 'currency', currency: 'AUD', maximumFractionDigits: 0 });
+    }
+
+    function formatCurrency2(value) {
+      return value.toLocaleString('en-AU', { style: 'currency', currency: 'AUD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function calculate() {
+      const annualKm = Math.max(parseFloat(annualKmEl.value) || 0, 0);
+      const currentConsumption = Math.max(parseFloat(currentConsumptionEl.value) || 0, 0);
+      const fuelPrice = Math.max(parseFloat(fuelPriceEl.value) || 0, 0);
+
+      const currentAnnualCost = (annualKm / 100) * currentConsumption * fuelPrice;
+      const improvedConsumption = currentConsumption * (1 - IMPROVEMENT_PERCENTAGE);
+      const newAnnualCost = (annualKm / 100) * improvedConsumption * fuelPrice;
+      const annualSavings = Math.max(currentAnnualCost - newAnnualCost, 0);
+      const monthlySavings = annualSavings / 12;
+      const paybackMonths = annualSavings > 0 ? (1650 / annualSavings) * 12 : 0;
+      const fiveYearSavings = annualSavings * 5;
+
+      annualSavingsEl.textContent = formatCurrency(annualSavings);
+      monthlySavingsEl.textContent = formatCurrency2(monthlySavings);
+      consumptionChangeEl.textContent = `${currentConsumption.toFixed(1)} → ${improvedConsumption.toFixed(1)} L/100km`;
+      paybackPeriodEl.textContent = `${paybackMonths.toFixed(1)} months`;
+      fiveYearSavingsEl.textContent = formatCurrency(fiveYearSavings);
+      newAnnualCostEl.textContent = formatCurrency(newAnnualCost);
+
+      // ROI Forecast Graph (5 years)
+      const TUNE_COST = 1650;
+      const year1Net = annualSavings - TUNE_COST;
+      const year2Net = (annualSavings * 2) - TUNE_COST;
+      const year3Net = (annualSavings * 3) - TUNE_COST;
+      const year4Net = (annualSavings * 4) - TUNE_COST;
+      const year5Net = (annualSavings * 5) - TUNE_COST;
+      
+      const maxValue = Math.max(year1Net, year2Net, year3Net, year4Net, year5Net, 0);
+      const maxHeight = 180; // pixels
+      
+      function setBarHeight(barEl, labelEl, netValue) {
+        const height = maxValue > 0 ? (Math.max(netValue, 0) / maxValue) * maxHeight : 0;
+        barEl.querySelector('div').style.height = `${height}px`;
+        labelEl.textContent = netValue >= 0 ? formatCurrency(netValue) : `-${formatCurrency(Math.abs(netValue))}`;
+        
+        // Color coding: red if negative, green if positive
+        if (netValue >= 0) {
+          barEl.querySelector('div').classList.remove('opacity-30');
+          labelEl.classList.remove('text-white/40');
+          labelEl.classList.add('text-evolveRed');
+        } else {
+          barEl.querySelector('div').classList.add('opacity-30');
+          labelEl.classList.add('text-white/40');
+          labelEl.classList.remove('text-evolveRed');
+        }
+      }
+      
+      setBarHeight(year1BarEl, year1LabelEl, year1Net);
+      setBarHeight(year2BarEl, year2LabelEl, year2Net);
+      setBarHeight(year3BarEl, year3LabelEl, year3Net);
+      setBarHeight(year4BarEl, year4LabelEl, year4Net);
+      setBarHeight(year5BarEl, year5LabelEl, year5Net);
+      
+      // Breakeven message
+      if (annualSavings > 0) {
+        const breakevenYears = TUNE_COST / annualSavings;
+        if (breakevenYears <= 1) {
+          breakevenTextEl.textContent = `✓ Tune pays for itself in ${(breakevenYears * 12).toFixed(1)} months`;
+        } else if (breakevenYears <= 5) {
+          breakevenTextEl.textContent = `✓ Tune pays for itself in ${breakevenYears.toFixed(1)} years`;
+        } else {
+          breakevenTextEl.textContent = `Payback period: ${breakevenYears.toFixed(1)} years`;
+        }
+      } else {
+        breakevenTextEl.textContent = 'Enter your details to see ROI forecast';
+      }
+    }
+
+    // Removed button selection - now fixed 10% improvement
+
+    [annualKmEl, currentConsumptionEl, fuelPriceEl].forEach(el => {
+      el.addEventListener('input', calculate);
+    });
+
+    calcBtn.addEventListener('click', calculate);
+
+    calculate();
+  </script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Development
+.vscode/
+.idea/
+
+# Temporary
+*.tmp
+*.swp
